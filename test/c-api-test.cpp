@@ -92,3 +92,25 @@ TEST_CASE( "map/last_error", "should return errors" ) {
 
       mapnik_map_free(map);
 }
+
+TEST_CASE( "register_last_error", "should return errors" ) {
+      const char * error;
+      error = mapnik_register_last_error();
+      REQUIRE( NULL==error );
+
+      mapnik_register_datasources(NULL);
+      error = mapnik_register_last_error();
+      REQUIRE( NULL!=strstr(error, "NULL not valid") );
+
+      mapnik_register_datasources("/tmp/");
+      error = mapnik_register_last_error();
+      REQUIRE( NULL==error );
+
+      mapnik_register_fonts(NULL);
+      error = mapnik_register_last_error();
+      REQUIRE( NULL!=strstr(error, "NULL not valid") );
+
+      mapnik_register_fonts("/tmp/");
+      error = mapnik_register_last_error();
+      REQUIRE( NULL==error );
+}

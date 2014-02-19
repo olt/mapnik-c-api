@@ -13,8 +13,10 @@ extern "C"
 #endif
 
 MAPNIKCAPICALL int mapnik_register_datasources(const char* path);
+
 MAPNIKCAPICALL int mapnik_register_fonts(const char* path);
 
+MAPNIKCAPICALL const char * mapnik_register_last_error();
 
 // Coord
 typedef struct _mapnik_coord_t {

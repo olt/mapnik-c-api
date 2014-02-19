@@ -16,7 +16,14 @@ extern "C"
 {
 #endif
 
+static std::string * register_err;
+
+inline void mapnik_register_reset_last_error() {
+    if (register_err) { delete register_err; register_err = NULL; }
+}
+
 int mapnik_register_datasources(const char* path) {
+    mapnik_register_reset_last_error();
     try {
 #if MAPNIK_VERSION >= 200200
         mapnik::datasource_cache::instance().register_datasources(path);
@@ -25,19 +32,27 @@ int mapnik_register_datasources(const char* path) {
 #endif
         return 0;
     } catch (std::exception const& ex) {
-        printf("%s\n",ex.what());
+        register_err = new std::string(ex.what());
         return -1;
     }
 }
 
 int mapnik_register_fonts(const char* path) {
+    mapnik_register_reset_last_error();
     try {
         mapnik::freetype_engine::register_fonts(path);
         return 0;
     } catch (std::exception const& ex) {
-        printf("%s\n",ex.what());
+        register_err = new std::string(ex.what());
         return -1;
     }
+}
+
+const char *mapnik_register_last_error() {
+    if (register_err) {
+        return register_err->c_str();
+    }
+    return NULL;
 }
 
 struct _mapnik_map_t {
